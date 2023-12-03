@@ -12,4 +12,9 @@ fn main() {
         .expect("Could not read input file");
     println!("Day Two, Part One:\n{}\n", aoc_2023::day_two::part_one(&contents));
     println!("Day Two, Part Two:\n{}\n", aoc_2023::day_two::part_two(&contents));
+
+    let file_path = "input/day_three";
+    let contents = fs::read_to_string(file_path)
+        .expect("Could not read input file");
+    println!("Day Three, Part One:\n{}\n", aoc_2023::day_three::part_one(&contents));
 }
