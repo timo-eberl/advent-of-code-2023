@@ -32,6 +32,32 @@ pub fn part_one(input : &String) -> u32 {
 	id_sum
 }
 
+pub fn part_two(input : &String) -> u32 {
+	let mut sum_of_powers : u32 = 0;
+
+	let input_wo_whitespace = remove_whitespace(input.as_str());
+	// split at "Game" and remove the first, because it is empty
+	let games = input_wo_whitespace.split("Game").skip(1);
+
+	for game in games {
+		let game_info = game
+			.split_once(':')
+			.expect("Should have contained ':'")
+			.1;
+
+		let mut required_cubes = CubeCount { red: 0, green: 0, blue: 0 };
+		for draw in game_info.split(';') {
+			let cube_count = string_to_cube_count(draw);
+			required_cubes = cube_count_max(&required_cubes, &cube_count);
+		}
+
+		let set_power = required_cubes.red * required_cubes.green * required_cubes.blue;
+		sum_of_powers += set_power;
+	}
+
+	sum_of_powers
+}
+
 fn is_draw_possible(draw : &CubeCount, bag_contents : &CubeCount) -> bool {
 	draw.red <= bag_contents.red
 		&& draw.green <= bag_contents.green
@@ -68,6 +94,14 @@ struct CubeCount {
 	blue : u32,
 }
 
+fn cube_count_max(left : &CubeCount, right : &CubeCount) -> CubeCount {
+	CubeCount {
+		red: std::cmp::max(left.red, right.red),
+		green: std::cmp::max(left.green, right.green),
+		blue: std::cmp::max(left.blue, right.blue),
+	}
+}
+
 fn remove_whitespace(s: &str) -> String {
     s.chars().filter(|c| !c.is_whitespace()).collect()
 }
@@ -84,5 +118,17 @@ Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
 ";
 		assert_eq!(crate::day_two::part_one(&String::from(sample_data)), 8);
+	}
+
+	#[test]
+	fn part_two() {
+		let sample_data =
+"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+";
+		assert_eq!(crate::day_two::part_two(&String::from(sample_data)), 2286);
 	}
 }
