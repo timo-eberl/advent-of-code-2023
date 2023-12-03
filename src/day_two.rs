@@ -68,14 +68,10 @@ fn string_to_cube_count(s : &str) -> CubeCount {
 	let mut cube_count = CubeCount { red: 0, green: 0, blue: 0 };
 
 	let color_string_to_count = |s : &str, color : &str| -> u32 {
-		if s.ends_with(color) {
-			return s
-				.split_at(s.len() - color.len())
-				.0
-				.parse::<u32>()
-				.expect("Should have been a number");
+		match s.strip_suffix(color) {
+			None => 0,
+			Some(n) => n.parse::<u32>().expect("Should have been a number"),
 		}
-		0
 	};
 
 	for color in s.split(',') {
